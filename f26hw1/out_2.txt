@@ -1,0 +1,10 @@
+The communication mode is set to UDP
+Your request has been approved, 3 Mike "The Letter"
+Request Failed - Book not available
+Your request has been approved, 4 Lucy "Divergent"
+3 "The Letter"
+1 not found, no such borrow record
+"The Letter" 0
+"The Great Gatsby" 15
+"Divergent" 8
+"The Count of Monte Cristo" 17
