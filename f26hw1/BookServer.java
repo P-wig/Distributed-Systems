@@ -44,6 +44,7 @@ public class BookServer {
         }
     }
 
+    // TCP server loop: accepts incoming connections and spawns a new thread for each client.
     private static void tcpLoop(final Library library, ServerSocket socket) {
         while (true) {
             try {
@@ -78,6 +79,7 @@ public class BookServer {
         }
     }
 
+    // UDP server loop: receives incoming datagrams and spawns a new thread for each request.
     private static void udpLoop(final Library library, final DatagramSocket socket) {
         while (true) {
             try {
