@@ -1,2 +1,3 @@
 # Compiled class files (including nested classes such as BookServer$Library.class)
 *.class
+*.zip
