@@ -1,0 +1,18 @@
+# Generated data (keep the folders)
+data/results/*
+data/traces/*
+!data/results/.gitkeep
+!data/traces/.gitkeep
+analysis/figures/*
+!analysis/figures/.gitkeep
+
+# Go
+*.exe
+*.test
+*.out
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
