@@ -3,16 +3,13 @@ data/results/*
 data/traces/*
 !data/results/.gitkeep
 !data/traces/.gitkeep
-analysis/figures/*
-!analysis/figures/.gitkeep
-
-# Go
-*.exe
-*.test
-*.out
+figures/*
+!figures/.gitkeep
 
 # Python
 __pycache__/
 *.pyc
 .venv/
 venv/
+*.egg-info/
+.pytest_cache/

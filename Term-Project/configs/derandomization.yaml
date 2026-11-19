@@ -1,0 +1,8 @@
+# Derandomized variants against oblivious and adaptive adversaries (PROJECT_PLAN.md, 5.4).
+name: derandomization
+algorithms: [layered_rand, coin_rand, ring_rand]
+variants: [round_robin, hashed, staggered_round_robin, load_feedback]
+n: [16, 64, 256]
+w_factor: n_squared
+adversaries: [uniform, few_nodes, adaptive]
+seeds: 30

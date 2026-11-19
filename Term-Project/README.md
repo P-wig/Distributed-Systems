@@ -1,31 +1,35 @@
 # Distributed Trigger Counting
 
-Implementation and comparison of LayeredRand, CoinRand and RingRand (the paper's ST-Rand), plus derandomization experiments. See [PROJECT_PLAN.md](PROJECT_PLAN.md) for goals and plan, and [tocs2012.pdf](tocs2012.pdf) for the reference paper.
+Implementation and comparison of LayeredRand, CoinRand and RingRand (the paper's ST-Rand), plus derandomization experiments, all in Python. See [PROJECT_PLAN.md](PROJECT_PLAN.md) for goals and plan, and [tocs2012.pdf](tocs2012.pdf) for the reference paper.
 
 ## Layout
 
 | Path | Contents |
 |---|---|
-| `sim/` | Go: shared interfaces (processor, message, network) and metrics |
-| `algo/centralized/` | Go: deterministic baseline |
-| `algo/layeredrand/`, `algo/coinrand/`, `algo/ringrand/` | Go: the three randomized algorithms |
-| `algo/derand/` | Go: derandomized variants |
-| `adversary/` | Go: trigger distributions and the adaptive adversary |
-| `cmd/experiment/` | Go: experiment runner, writes CSV to `data/results/` |
-| `cmd/demoserver/` | Go: optional live backend for the demo |
-| `analysis/` | Python: plots and analysis of the CSV results |
-| `demo/` | Python: the demo |
-| `data/results/`, `data/traces/` | Generated CSV results and JSONL event traces (git-ignored) |
-| `docs/` | Data format contract between Go and Python |
+| `src/dtc/core/` | Simulation core: processor, network, event engine, metrics, seeded RNG, trace recorder |
+| `src/dtc/algorithms/` | Centralized baseline, LayeredRand, CoinRand, RingRand, layouts, registry |
+| `src/dtc/derand/` | Derandomized parent-selection and Collection policies |
+| `src/dtc/adversary/` | Oblivious trigger distributions and the adaptive adversary |
+| `src/dtc/experiments/` | Config loading and the parallel experiment runner |
+| `src/dtc/analysis/` | Result loading, plots and growth-rate fits |
+| `configs/` | YAML experiment definitions (`smoke`, `comparison`, `derandomization`) |
+| `tests/unit/`, `tests/integration/` | Unit tests and end-to-end correctness tests |
+| `demo/` | The demo (imports `dtc` directly) |
+| `data/results/`, `data/traces/` | Generated CSV results and JSONL traces (git-ignored) |
+| `figures/` | Generated plots (git-ignored) |
+| `docs/` | Data format reference |
 | `report/` | Final report |
 
-## Usage
+## Setup and usage
 
 ```
-go build ./...
-go test ./...
-go run ./cmd/experiment
+python -m venv .venv
+.venv\Scripts\activate
+pip install -e ".[dev,demo]"
 
-pip install -r analysis/requirements.txt
-pip install -r demo/requirements.txt
+pytest
+dtc-experiment configs/smoke.yaml
+streamlit run demo/app.py
 ```
+
+`dtc-experiment` and the demo are placeholders until implemented.

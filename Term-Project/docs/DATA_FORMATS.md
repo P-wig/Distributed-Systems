@@ -1,15 +1,13 @@
-# Data Formats (Go <-> Python contract)
+# Data Formats
 
-The Go simulator and the Python analysis/demo code communicate only through
-these files. Keep this document in sync with the code on both sides.
-
-## Experiment results: `data/results/*.csv`
+## Experiment results: `data/results/<config name>.csv`
 
 One row per simulation run.
 
 | Column | Type | Meaning |
 |---|---|---|
-| `algorithm` | string | `centralized`, `layeredrand`, `coinrand`, `ringrand`, or a derandomized variant name |
+| `algorithm` | string | `centralized`, `layered_rand`, `coin_rand`, `ring_rand` |
+| `variant` | string | derandomized variant name, or empty for the original algorithm |
 | `n` | int | number of processors |
 | `w` | int | trigger threshold |
 | `adversary` | string | trigger distribution name |
@@ -21,10 +19,9 @@ One row per simulation run.
 | `max_rcv_load` | int | MaxRcvLoad |
 | `max_msg_load` | int | MaxMsgLoad |
 
-## Event traces: `data/traces/*.jsonl`
+## Event traces: `data/traces/*.jsonl` (optional)
 
-One JSON object per line, used by the demo for replay and live streaming.
-Every event has `t` (logical time, integer) and `type`.
+One JSON object per line, written by `dtc.core.trace` and used by the demo for replay. Every event has `t` (logical time, integer) and `type`.
 
 | `type` | Extra fields | Meaning |
 |---|---|---|
@@ -33,3 +30,7 @@ Every event has `t` (logical time, integer) and `type`.
 | `msg` | `from`, `to`, `kind`, `round` | a message was sent |
 | `round_end` | `round`, `w_hat` | a new round started with initial value `w_hat` |
 | `alert` | `triggers` | the alert was raised |
+
+## Experiment configs: `configs/*.yaml`
+
+Keys: `name`, `algorithms`, `variants` (optional), `n` (list), `w_factor` (`n_squared`, `n_squared_log_n` or `n_cubed`), `adversaries`, `seeds` (count).

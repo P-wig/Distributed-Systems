@@ -88,13 +88,16 @@ All three algorithms assume triggers arrive one at a time. Section 6 removes thi
 
 Write a **discrete-event simulator** with one message-passing actor per processor. Do not use real distributed deployment. A simulator makes message counts exact and runs reproducible, and it can run `n` up to thousands.
 
-- **Language:** Python 3 or Java. The course used Java in `f26hw1`, but Python is faster for plotting. *Decide before coding starts.*
-- **Core abstractions:**
-  - `Processor` with `on_trigger()` and `on_message(msg)`.
-  - A `Network` that delivers messages, with a FIFO or randomized-delay mode, and counts every message sent and received per processor.
-  - An `Adversary` that decides which processor gets each trigger.
-  - Algorithm classes `Centralized`, `LayeredRand`, `CoinRand`, `RingRand`, each behind a common interface.
+- **Language:** Python 3.12 only, for the simulator, experiments, analysis and demo. One language means the demo imports the real algorithm code directly.
+- **Package:** `src/dtc/` (installed with `pip install -e .`). See [README.md](README.md) for the full layout.
+  - `dtc.core`: `Processor` with `on_trigger()` and `on_message(msg)`, a `Network` that delivers messages and counts every send and receive, the event engine, metrics and seeded RNG.
+  - `dtc.algorithms`: `Centralized`, `LayeredRand`, `CoinRand`, `RingRand`, each behind a common `Algorithm` interface and a registry keyed by name.
+  - `dtc.derand`: derandomized variants of the same interface, so they plug into the same experiments.
+  - `dtc.adversary`: trigger distributions and the adaptive adversary.
+  - `dtc.experiments`: experiment runner driven by YAML files in `configs/`, writing CSV to `data/results/`.
+  - `dtc.analysis`: plots and fits from the CSV files, writing to `figures/`.
 - **Reproducibility:** a seeded RNG, with the seed logged in every run.
+- **Performance:** pure Python is slow for large runs. Keep the hot paths simple, run seeds in parallel with `multiprocessing`, and avoid `w = n^3` for large `n` (see 4.3).
 - **Start with the sequential model** (one trigger fully processed before the next). Add the Section 6 concurrency layer after the sequential versions pass tests.
 
 ### 4.2 Correctness checks (run on every algorithm)
@@ -109,7 +112,7 @@ Write a **discrete-event simulator** with one message-passing actor per processo
 **Parameters**
 
 - `n` in {16, 64, 256, 1024, 4096}
-- `w` in {`n^2`, `n^3`, `n^2 log n`}
+- `w` in {`n^2`, `n^2 log n`}, plus `n^3` only for `n <= 256` (larger runs are infeasible, since `w` would be around 7×10^10 at `n = 4096`)
 - Trigger distributions (adversary):
   - uniform over processors
   - all triggers to one processor
@@ -135,8 +138,9 @@ Write a **discrete-event simulator** with one message-passing actor per processo
 
 ### 4.4 Deliverables
 
-- Source code with a README on how to run it.
-- Raw result data (CSV) and the plotting scripts.
+- Source code (`src/dtc/`) with tests and a README on how to run it.
+- Raw result data (CSV in `data/results/`) and the plotting code (`dtc.analysis`).
+- Demo in `demo/`, with complete creative freedom on its concept.
 - Final report with figures and the derandomization analysis.
 - Short presentation, if required.
 
@@ -190,7 +194,7 @@ Each of these is an acceptable result:
 
 | Phase | Work | Output |
 |---|---|---|
-| 1 | Read the paper. Fix the language and simulator design. Confirm RingRand = ST-Rand. | Design notes |
+| 1 | Read the paper. Install the package and fix the simulator design (language: Python). Confirm RingRand = ST-Rand. | Design notes |
 | 2 | Simulator core, metrics, centralized baseline | Working baseline with tests |
 | 3 | LayeredRand and CoinRand (sequential model) | Passing correctness tests |
 | 4 | RingRand (sequential model) | Passing correctness tests, failure-rate measurement |

@@ -1,0 +1,7 @@
+# Small, fast run used to check the pipeline end to end.
+name: smoke
+algorithms: [centralized, layered_rand, coin_rand, ring_rand]
+n: [15]
+w_factor: n_squared
+adversaries: [uniform]
+seeds: 3

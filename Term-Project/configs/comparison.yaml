@@ -1,0 +1,7 @@
+# Main comparison of the baseline and the three algorithms (PROJECT_PLAN.md, 4.3).
+name: comparison
+algorithms: [centralized, layered_rand, coin_rand, ring_rand]
+n: [16, 64, 256, 1024]
+w_factor: n_squared
+adversaries: [uniform, single_node, few_nodes, bursty, permutation]
+seeds: 30
