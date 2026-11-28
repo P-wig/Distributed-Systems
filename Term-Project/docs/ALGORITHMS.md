@@ -50,7 +50,7 @@ The three algorithms below try to keep this low message cost while spreading the
 - Each layer has its own **threshold**. Lower layers (more computers, each seeing few triggers) have small thresholds. Upper layers (few computers, receiving lots of traffic) have large ones.
 - When a computer's counter reaches its layer's threshold, it takes that amount out of its counter, wraps it up as a **coin**, and sends the coin to a **randomly chosen computer one layer up**.
 - A computer that receives a coin adds the coin's value to its own counter. If that pushes it over *its* threshold, it sends a coin one layer further up, again to a random computer.
-- When the root's counter passes its threshold, the round is over. The root starts an exact count by asking everybody (broadcast down the tree, add up on the way back up). Then `w_hat` is updated and the next round begins.
+- When the root's counter reaches half of `w_hat`, the round is over. The root starts an exact count by asking everybody (broadcast down the tree, add up on the way back up). Then `w_hat` is updated and the next round begins.
 
 **Why the randomness matters:** by choosing a random parent, no computer in a layer gets flooded with coins, even if the adversary sends all triggers to one place.
 

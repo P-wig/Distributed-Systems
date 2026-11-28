@@ -55,7 +55,7 @@ The deterministic lower bound for message complexity is `Omega(n log(w/n))` (Gar
 - Round threshold for layer `l`: `tau(l) = ceil(w_hat / (4 * 2^l * log(n+1)))`.
 - Each processor keeps a counter `C(x)`. A trigger adds 1. A coin from layer `l+1` adds `tau(l+1)`.
 - When `C(x) >= tau(l)`, subtract `tau(l)` and send a coin to a **uniformly random** processor in layer `l-1`.
-- When the root's counter reaches its threshold, it starts the end-of-round procedure. This is a broadcast and reduce over the tree to compute the exact count `w'`, then `w_hat = w_hat - w'`.
+- When the root's counter reaches `ceil(w_hat / 2)`, it starts the end-of-round procedure. This is a broadcast and reduce over the tree to compute the exact count `w'`, then `w_hat = w_hat - w'`.
 
 ### 3.3 CoinRand (Section 4)
 

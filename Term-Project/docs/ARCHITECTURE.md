@@ -18,11 +18,12 @@ Status key: ✅ implemented, ⏳ planned (file exists as a stub).
 | Trial creation | [experiments/config.py](../src/dtc/experiments/config.py) | `TrialSpec` is one trial. `compute_w` turns `w_factor` into `w`, and `expand_trials` expands a YAML config into every trial. | ✅ |
 | Trial execution | [experiments/run.py](../src/dtc/experiments/run.py) | `run_trial(spec)` builds everything, runs it, and returns a `TrialResult` matching [DATA_FORMATS.md](DATA_FORMATS.md). | ✅ |
 | Experiment CLI (parallel seeds, CSV output) | [experiments/run.py](../src/dtc/experiments/run.py) `main()` | Runs every trial in a config and writes `data/results/<name>.csv`. | ⏳ |
-| Layouts (tree and ring overlays) | [algorithms/layout.py](../src/dtc/algorithms/layout.py) | Layer and index math for `n = 2^L - 1` and `n = 2^L`, and ring order. | ⏳ |
-| Centralized baseline | [algorithms/centralized.py](../src/dtc/algorithms/centralized.py) | Deterministic master-based counter. | ⏳ |
-| LayeredRand, CoinRand, RingRand | [layered_rand.py](../src/dtc/algorithms/layered_rand.py), [coin_rand.py](../src/dtc/algorithms/coin_rand.py), [ring_rand.py](../src/dtc/algorithms/ring_rand.py) | The three algorithms (sequential model first). | ⏳ |
+| Layouts (tree and ring overlays) | [algorithms/layout.py](../src/dtc/algorithms/layout.py) | Heap-ordered tree layers (any `n`, exact paper layout when `n = 2^L - 1` or `2^L`) and ring order. | ✅ |
+| Centralized baseline | [algorithms/centralized.py](../src/dtc/algorithms/centralized.py) | Deterministic master-based counter. | ✅ |
+| LayeredRand, CoinRand, RingRand | [layered_rand.py](../src/dtc/algorithms/layered_rand.py), [coin_rand.py](../src/dtc/algorithms/coin_rand.py), [ring_rand.py](../src/dtc/algorithms/ring_rand.py) | The three algorithms (sequential model). LayeredRand and CoinRand share the tree end-of-round in [tree_round.py](../src/dtc/algorithms/tree_round.py). | ✅ |
+| Randomness hooks | [derand/parent_selection.py](../src/dtc/derand/parent_selection.py), [collection_policy.py](../src/dtc/derand/collection_policy.py) | `ParentSelector` and `CollectionPolicy` interfaces with the paper's random versions. Derandomized variants will plug in here. | ✅ (random only) |
 | Adaptive adversary | [adversary/adaptive.py](../src/dtc/adversary/adaptive.py) | Aims triggers at processors that tend to receive coins. | ⏳ |
-| Derandomized variants | [derand/](../src/dtc/derand) | Deterministic parent-selection and Collection policies. | ⏳ |
+| Derandomized variants | [derand/](../src/dtc/derand) | Deterministic parent-selection and Collection policies (the random baselines already exist, see above). | ⏳ |
 | Traces | [core/trace.py](../src/dtc/core/trace.py) | Optional JSONL event traces for the demo. | ⏳ |
 | Analysis | [analysis/](../src/dtc/analysis) | Result loading, plots and growth-rate fits. | ⏳ |
 | Demo | [demo/app.py](../demo/app.py) | Streamlit app that imports `dtc` directly. | ⏳ |
@@ -153,8 +154,8 @@ The algorithms differ in the second and third boxes. See [ALGORITHMS.md](ALGORIT
 
 ```mermaid
 flowchart LR
-    P2["Phase 2<br/>core, metrics, baseline ✅ core"] --> P3["Phase 3<br/>LayeredRand, CoinRand<br/>(sequential)"]
-    P3 --> P4["Phase 4<br/>RingRand<br/>(sequential)"]
+    P2["Phase 2<br/>core, metrics, baseline ✅"] --> P3["Phase 3<br/>LayeredRand, CoinRand<br/>(sequential) ✅"]
+    P3 --> P4["Phase 4<br/>RingRand<br/>(sequential) ✅"]
     P4 --> P5["Phase 5<br/>concurrency layer<br/>(queues, round numbers)"]
     P5 --> P6["Phase 6<br/>comparison experiments,<br/>plots"]
     P6 --> P7["Phase 7<br/>derandomized variants,<br/>adaptive adversary"]
@@ -168,4 +169,4 @@ flowchart LR
 - **Self-messages are free.** A processor messaging itself is delivered but not counted, because one processor can play both a leaf and an internal role in CoinRand.
 - **Separate random streams.** The adversary and the algorithm use different streams from the same seed, so algorithms can be compared on identical trigger sequences.
 - **Variants raise `NotImplementedError`** in `run_trial` until `dtc.derand` exists.
-- **Known config risk.** [smoke.yaml](../configs/smoke.yaml) uses `n: [15]` for every algorithm, but CoinRand needs `n = 2^L`. Resolve this when `layout.py` is written.
+- **Any `n`.** The paper assumes `n = 2^L - 1` (LayeredRand) and `n = 2^L` (CoinRand). The layouts allow a partially filled last layer, so the shipped configs (`n = 15`, `16`, `64`, ...) all run, and the paper's layout is reproduced exactly for its `n`. LayeredRand uses the actual layer count in place of `log(n+1)` and CoinRand uses `L = floor(log2 n)` internal layers. The paper's no-stall arguments (Sections 3.2, 4.2, 4.6) still hold, and `tests/unit/test_layout.py` checks them numerically. The constants in the load bounds can differ slightly for non-paper `n`.
